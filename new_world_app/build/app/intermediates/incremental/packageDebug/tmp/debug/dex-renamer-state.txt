@@ -1,0 +1,4 @@
+#Fri Sep 15 17:39:09 COT 2023
+base.0=C\:\\Users\\PC\\Documents\\flutter\\flutter-2023\\new_world_app\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
