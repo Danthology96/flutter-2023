@@ -27,13 +27,13 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   NotificationsBloc() : super(const NotificationsState()) {
     on<NotificationStatusChanged>(_notificationStatusChanged);
 
+    on<NotificationReceived>(_onPushMessageReceived);
+
     /// Verificar estado del usuario
     _initialStatusCheck();
 
     /// Escucha los mensajes de tipo foreground
     _onForegroundMessage();
-
-    on<NotificationReceived>(_onPushMessageReceived);
   }
 
   static Future<void> initializeFirebase() async {
@@ -60,7 +60,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     debugPrint(token);
   }
 
-  void _handleRemoteMessage(RemoteMessage message) {
+  void handleRemoteMessage(RemoteMessage message) {
     if (message.notification == null) return;
 
     final notification = PushMessage(
@@ -80,7 +80,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   }
 
   void _onForegroundMessage() {
-    FirebaseMessaging.onMessage.listen(_handleRemoteMessage);
+    FirebaseMessaging.onMessage.listen(handleRemoteMessage);
   }
 
   void _onPushMessageReceived(
@@ -102,5 +102,14 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
       sound: true,
     );
     add(NotificationStatusChanged(settings.authorizationStatus));
+  }
+
+  PushMessage? getMessageByID(String pushMessageID) {
+    final exist = state.notifications
+        .any((element) => element.messageID == pushMessageID);
+    if (!exist) return null;
+
+    return state.notifications
+        .firstWhere((element) => element.messageID == pushMessageID);
   }
 }
