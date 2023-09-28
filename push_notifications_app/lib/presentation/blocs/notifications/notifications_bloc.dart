@@ -14,8 +14,6 @@ part 'notifications_state.dart';
 
 /// TOP LEVEL FUNCTION
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
 
   debugPrint("Handling a background message: ${message.messageId}");
@@ -23,8 +21,19 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
+  int pushNumberId = 0;
 
-  NotificationsBloc() : super(const NotificationsState()) {
+  final Future<void> Function()? requestLocalNotificationPermissions;
+  final void Function({
+    required int id,
+    String? title,
+    String? body,
+    String? data,
+  })? showLocalNotification;
+
+  NotificationsBloc(
+      {this.requestLocalNotificationPermissions, this.showLocalNotification})
+      : super(const NotificationsState()) {
     on<NotificationStatusChanged>(_notificationStatusChanged);
 
     on<NotificationReceived>(_onPushMessageReceived);
@@ -76,6 +85,15 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     );
 
     debugPrint(notification.toString());
+
+    if (showLocalNotification != null) {
+      showLocalNotification!(
+        id: ++pushNumberId,
+        title: notification.title,
+        body: notification.body,
+        data: notification.messageID,
+      );
+    }
     add(NotificationReceived(message: notification));
   }
 
@@ -101,6 +119,12 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
       provisional: false,
       sound: true,
     );
+
+    /// Solicita acceso a las local notifications
+    if (requestLocalNotificationPermissions == null) {
+      await requestLocalNotificationPermissions!();
+    }
+
     add(NotificationStatusChanged(settings.authorizationStatus));
   }
 
