@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "79105574650",
+    "project_id": "flutter-projects-a86d2",
+    "storage_bucket": "flutter-projects-a86d2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:79105574650:android:dd99543e6b3beee064eb43",
+        "android_client_info": {
+          "package_name": "com.danov.push_notifications_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBw6UnIfInNqj4wFEoi6lM3G8nne4ib11o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
